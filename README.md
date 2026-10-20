@@ -1,0 +1,2 @@
+# Stopp_knappen
+Stopp
