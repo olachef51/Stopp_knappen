@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#991b1b">
-<title>STOPP – Scenarioövning v.05</title>
+<title>STOPP – Scenarioövning v.07</title>
 <style>
 :root{font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:#202735;background:#f4f5f7}
 *{box-sizing:border-box}body{margin:0}button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;font-weight:750;border-radius:9px;padding:10px 14px;background:#293548;color:white}button:disabled{opacity:.48;cursor:not-allowed}button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid #286ded;outline-offset:3px}a{color:#334155}
@@ -25,17 +25,61 @@
 #student .send-row{display:flex;gap:9px;flex-wrap:wrap;margin:10px 0}#student .send-row button{font-size:.88rem;padding:10px}
 #student .little-state{min-height:25px;color:#4b5563;font-size:.85rem}
 #student .count{color:#4b5563;font-weight:550;margin:0;font-size:.9rem}
+#student .student-timer{font-variant-numeric:tabular-nums;font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;letter-spacing:.04em;margin:0;color:#26344a}
+.student-stop.ready{background:#244f9b;border-color:#18376c;font-size:clamp(2.7rem,9vw,5rem);box-shadow:0 15px 32px #172d5f28}
+.student-stop.finished{background:#707985;border-color:#525a67;box-shadow:none;font-size:clamp(2.5rem,9vw,4.7rem)}
+#student .student-finish{background:#3e4757;color:white;font-size:.9rem;padding:11px 16px;border-radius:9px;margin:0}
+#student .student-info{max-width:480px}
+
 .overlay{position:fixed;inset:0;background:#a70e17;color:#fff;z-index:50;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:30px}.overlay h1{font-size:clamp(4rem,12vw,8rem);margin:7px 0}.overlay p{font-size:clamp(1.2rem,3vw,2rem)}.overlay button{background:#fff;color:#961019}
+
+/* Pedagogisk genomgång – syns bara i lärarvyn. */
+.ref-guide{border:1px solid #e8bdbe;border-radius:12px;background:#fffafa;padding:16px;margin-top:16px}
+.ref-guide h3{font-size:1.05rem;margin:0 0 8px}
+.ref-note{font-size:.84rem;line-height:1.5;color:#526072;margin:8px 0 12px}
+.ref-row{display:grid;grid-template-columns:85px 1fr minmax(100px,auto);gap:12px;align-items:center;border-top:1px solid #f0dedf;padding:11px 0}
+.ref-row:first-child{border:0}
+.ref-time{display:inline-block;background:#fee2e2;color:#991b1b;padding:7px 8px;text-align:center;border-radius:9px;font-size:.83rem;font-weight:800;font-variant-numeric:tabular-nums}
+.ref-quote{font-size:.91rem;line-height:1.4;font-weight:650}.ref-kind{display:block;font-size:.8rem;color:#596477;font-weight:500;margin-bottom:3px}
+.ref-count{font-size:.87rem;text-align:right;white-space:nowrap;font-weight:700}.ref-count small{display:block;font-weight:400;color:#526072}
+.ref-question{border-left:4px solid #991b1b;padding:8px 12px;background:#fff;margin:12px 0 0;line-height:1.5}
+.ref-actions{margin:15px 0 8px;display:flex;flex-wrap:wrap;gap:9px}
+.ref-actions button{background:#991b1b}
+/* Projektorvy / reflektionsläge */
+.ref-overlay{position:fixed;inset:0;background:#f8fafc;color:#17212f;z-index:100;overflow-y:auto;padding:clamp(14px,3vw,48px)}
+.ref-page{max-width:1200px;margin:auto}.ref-header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.ref-heading{font-size:clamp(1.9rem,4vw,3.7rem);margin:8px 0 12px}.ref-sub{font-size:clamp(.95rem,1.5vw,1.2rem);color:#526072;line-height:1.45}
+.ref-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:18px 0}
+.ref-stat{border-radius:15px;background:#fff;box-shadow:0 2px 10px #0e1d3010;padding:16px;border:1px solid #e3e8ed}
+.ref-stat strong{display:block;font-size:clamp(1.8rem,4vw,3.2rem);font-variant-numeric:tabular-nums}
+.ref-stat span{display:block;color:#526072;font-size:.92rem}
+.ref-proj-chart{background:white;border-radius:16px;border:1px solid #e3e8ed;padding:16px;margin:15px 0}
+.ref-proj-chart h3{margin:2px 0 6px;font-size:1.17rem}
+.ref-proj-bars{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(9px,1fr);gap:3px;align-items:end;height:165px;padding:16px 0 0;border-bottom:2px solid #94a3b8;margin-top:12px}
+.ref-proj-bar{background:#bf2026;border-radius:4px 4px 0 0;min-height:0;position:relative}
+.ref-proj-bar span{position:absolute;top:-19px;left:0;right:0;text-align:center;color:#334155;font-size:.76rem;font-weight:700}
+.ref-ticks{display:flex;justify-content:space-between;font-size:.8rem;color:#526072;margin-top:7px}
+.ref-moments{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.ref-moment{background:white;border:1px solid #e3e8ed;border-radius:12px;padding:15px;display:flex;flex-direction:column;gap:7px}
+.ref-moment .ref-time{align-self:flex-start}.ref-moment strong{font-size:1.08rem;line-height:1.38}
+.ref-moment .count-note{font-weight:800;color:#991b1b}
+.ref-panel-question{padding:15px;background:#fff0f0;border-left:5px solid #991b1b;border-radius:0 9px 9px 0;font-size:clamp(1rem,2vw,1.2rem);line-height:1.5;margin:18px 0}
+.ref-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ref-controls button{background:#26344a}.ref-controls .ref-close{background:#991b1b}
+@media(max-width:720px){.ref-row{grid-template-columns:80px 1fr;gap:8px}.ref-count{grid-column:2;text-align:left}.ref-moments{grid-template-columns:1fr}.ref-stats{gap:6px}.ref-stat{padding:11px}}
+@media print{#student,#teacher{display:none!important}.ref-overlay{position:static;overflow:visible}.ref-controls{display:none}}
 </style>
 </head>
 <body>
 <section id="student">
   <div class="hero">
     <h1 id="studentTitle">SCENARIO 1</h1>
-    <p class="student-info">Tryck när du tycker att någon går över gränsen.</p>
-    <button class="student-stop" id="stopButton" aria-label="STOPP – markera att gränsen passerats">STOPP!<small>TRYCK HÄR</small></button>
+    <p class="student-info" id="studentInstruction">Tryck på STARTA när Ola och Nina börjar.</p>
+    <button class="student-stop ready" id="stopButton" aria-label="STARTA – starta din tidtagning">STARTA<small>TRYCK NÄR ROLLSPELET BÖRJAR</small></button>
+    <p class="student-timer" id="studentTimer" aria-live="off">00:00</p>
     <p class="count"><span id="pressCount">0</span> tryck registrerade</p>
-    <p id="studentState" class="little-state" aria-live="polite"></p>
+    <button id="studentFinish" class="student-finish hidden">■ SLUT – scenariot är färdigt</button>
+    <p id="studentState" class="little-state" role="status" aria-live="polite"></p>
   </div>
   <div class="student-footer">
     <div class="scenario-picker"><label for="studentScenario" style="margin:0;font-size:inherit;font-weight:500">Välj scenario:</label>
@@ -43,7 +87,7 @@
     <details id="sendDetails">
       <summary>Skicka resultat efter övningen</summary>
       <div class="details-content">
-        <p>Resultatet innehåller inga namn. Om du mejlar det från ditt vanliga mejlkonto kan läraren däremot se vem som skickade mejlet.</p>
+        <p>Resultatet innehåller inga namn. Du kan skicka det efter alla fem scenarierna, även om du inte tryckte STOPP. Om du mejlar från ditt vanliga konto ser läraren din mejladress.</p>
         <div class="send-row">
           <button id="sendEmail" class="blue">✉ Skicka JSON via mejl</button>
           <button id="saveJson" class="soft">⬇ Spara JSON-fil</button>
@@ -57,8 +101,8 @@
 </section>
 <section id="teacher" class="hidden">
  <main class="wrap">
-  <div class="flex between"><h1>Lärarpanel – STOPP <small style="font-size:.65rem;color:#64748b">v.05</small></h1><a id="studentEntry" href="?vy=elev" class="small">Till elevvyn</a></div>
-  <p class="warn"><b>Endast GitHub:</b> Elevernas andra datorer kan inte skicka tryckningar live till lärarpanelen. Livetest fungerar mellan flikar i samma webbläsare. Från olika datorer samlar du in resultaten via JSON-mejl eller fil och läser in dem här. Anonym JSON betyder inte anonym e-postavsändare.</p>
+  <div class="flex between"><h1>Lärarpanel – STOPP <small style="font-size:.65rem;color:#64748b">v.07</small></h1><a id="studentEntry" href="?vy=elev" class="small">Till elevvyn</a></div>
+  <p class="warn"><b>Endast GitHub:</b> Elevernas andra datorer kan inte skicka tryckningar live till lärarpanelen. Ett lokalt test fungerar mellan flikar i samma webbläsare. Från olika datorer samlar du in resultaten via JSON-mejl eller fil och läser in dem här. Anonym JSON betyder inte anonym e-postavsändare.</p>
   <div class="card">
    <h2>Förbered elevlänken</h2>
    <label for="teacherEmail">Din mejladress för resultat</label>
@@ -81,22 +125,49 @@
     <div class="grid">
      <div class="metric"><span class="number" id="uniqueCount">0</span><small>Unika deltagarsessioner</small></div>
      <div class="metric"><span class="number" id="totalCount">0</span><small>Totalt antal STOPP</small></div>
-     <div class="metric"><span class="number" id="expectedCount">12</span><small>Angivet antal elever</small></div>
+     <div class="metric"><span class="number" id="finishedCount">0</span><small>Avslutade deltagarsessioner</small></div>
     </div>
-    <p class="small muted" id="progressLabel">0 av 12 har tryckt i lokalt test/importerat resultat.</p>
+    <p class="small muted" id="progressLabel">Resultaten visas när elevernas JSON har lästs in.</p>
+    <p class="small muted" id="runDurations">Speltiderna syns när elevernas JSON har lästs in.</p>
     <div class="bar-bg"><div class="bar-fill" id="progressFill"></div></div>
-    <h2 style="margin-top:25px">När tryckte eleverna?</h2><p class="small muted" id="timelineInfo">Starta scenariot i lärarpanelen precis när rollspelet börjar. Tiderna jämförs med elevernas registrerade klockslag när deras JSON läses in. Se till att datorernas klockor går någorlunda rätt.</p><div class="chart" id="eventChart"></div>
-    <div class="table-wrap"><table><thead><tr><th>Scenario</th><th>Efter STARTA (läraren)</th><th>Klockslag</th></tr></thead><tbody id="eventRows"></tbody></table></div>
+    <h2 style="margin-top:25px">När tryckte eleverna?</h2><p class="small muted" id="timelineInfo">Tiderna räknas från när varje elev tryckte STARTA på sin egen dator. Ge en gemensam startsignal så att deras tidpunkter blir jämförbara.</p><div class="chart" id="eventChart"></div>
+    <div class="table-wrap"><table><thead><tr><th>Scenario</th><th>Efter elevens STARTA</th><th>Klockslag</th></tr></thead><tbody id="eventRows"></tbody></table></div>
+    <section class="ref-guide" aria-label="Reflektionsunderlag">
+      <h3>Genomgång och reflektion</h3>
+      <p class="ref-note">Jämför anonyma STOPP-tryck (sekunder från elevens egen STARTA) med <strong>ungefärliga</strong> repliktider från genomläsningen. Tiderna är inte facit – olika elever kan uppfatta gränsen olika, och tempot kan variera.</p>
+      <div class="ref-actions"><button id="showReflection">▤ Visa genomgång på storbild</button></div>
+      <div id="refMoments" aria-live="polite"></div>
+      <div id="refDiscussion" class="ref-question"></div>
+    </section>
   </div>
   <div class="card">
    <h2>Samla in JSON-resultat</h2>
-   <p class="muted small">Klistra in JSON-texten från ett elevmejl eller läs in en eller flera JSON-filer. Resultatets innehåll har inga namn men mejlavsändaren kan synas. Tidpunkterna räknas från respektive STARTA-tid.</p>
+   <p class="muted small">Klistra in JSON-texten från ett elevmejl eller läs in en eller flera JSON-filer. Resultatets innehåll har inga namn men mejlavsändaren kan synas. Tidpunkterna räknas från elevens egen STARTA-knapp (i nya JSON-filer).</p>
    <label for="pasteJson">Klistra in JSON från mejl</label><textarea id="pasteJson" placeholder='{"format":"stopp-vfu-1",...}'></textarea>
    <div class="flex" style="margin:10px 0 18px"><button id="importPaste" class="blue">Läs in inklistrad JSON</button><label for="importFiles" style="margin:0">Eller välj JSON-filer</label><input type="file" id="importFiles" multiple accept=".json,application/json"></div>
    <div class="flex"><button id="exportCsv" class="blue">Ladda ner sammanställning (CSV)</button><button id="clearTeacher" class="soft">Rensa resultat</button></div>
    <p class="small" id="teacherNotice" role="status"></p>
   </div>
  </main>
+</section>
+<section id="reflectionOverlay" class="ref-overlay hidden" role="dialog" aria-modal="true" aria-label="Genomgång och reflektion">
+ <div class="ref-page">
+  <div class="ref-header">
+   <div><div class="small muted">VFU • VAR GÅR GRÄNSEN?</div><h2 class="ref-heading" id="refScreenTitle">Scenario 1</h2></div>
+   <div class="ref-controls"><button id="refPrevious">← Föregående</button><button id="refNext">Nästa →</button><button id="refClose" class="ref-close">Stäng genomgång</button></div>
+  </div>
+  <p class="ref-sub">När reagerade vi? Vad hände i rollspelet vid de här tidpunkterna? Tryckningarna är anonyma och kan inte användas som ett individuellt facit.</p>
+  <div class="ref-stats">
+   <div class="ref-stat"><strong id="refUnique">0</strong><span>Deltagarsessioner som tryckt</span></div>
+   <div class="ref-stat"><strong id="refTotal">0</strong><span>STOPP-tryck totalt</span></div>
+   <div class="ref-stat"><strong id="refFirst">–</strong><span>Första registrerade STOPP</span></div>
+  </div>
+  <div class="ref-proj-chart"><h3>Elevernas reaktioner över tid</h3><p class="small muted" id="refChartDescription">Antal tryck under varje femsekundersperiod</p><div class="ref-proj-bars" id="refProjectionChart"></div><div class="ref-ticks" id="refProjectionTicks"></div></div>
+  <h3 style="font-size:1.25rem">Ungefärliga repliker och reaktioner</h3>
+  <div id="refProjectionMoments" class="ref-moments"></div>
+  <div class="ref-panel-question"><strong>Diskutera:</strong> <span id="refProjectionQuestion"></span></div>
+  <p class="small muted">Repliktiderna är uppskattade. Antal tryck kan vara större än antal elever, eftersom samma elev får trycka flera gånger. Ingen registrering är inte liktydigt med att beteendet var okej. Resultat från andra elevdatorer syns först när deras JSON har lästs in. Eleverna behöver trycka STARTA ungefär samtidigt för att sekunderna ska kunna jämföras.</p>
+ </div>
 </section>
 <div id="alarmOverlay" class="overlay hidden" role="alertdialog" aria-modal="true" aria-label="Stoppsignal">
  <div style="font-size:5rem">🛑</div><h1>STOPP!</h1><p id="alarmText">SCENARIOT AVSLUTAS</p><button id="closeAlarm">VISA RESULTAT</button>
@@ -105,6 +176,41 @@
 'use strict';
 const $=id=>document.getElementById(id);
 const TEACHER_EMAIL='ola.ekdahl@malmo.se';
+// Ungefärliga tidpunkter utifrån manus och användarens genomläsning.
+// Visas endast i lärarpanelen, aldrig på elevsidan.
+const SCENARIO_GUIDE={
+ 1:{duration:50,moments:[
+  {from:5,to:10,kind:'Första varningssignal',quote:'Hallå! Är det någon som jobbar här eller?'},
+  {from:19,to:24,kind:'Nedlåtande kommentar',quote:'Det borde du väl förstå?'},
+  {from:29,to:38,kind:'Tydligare övertramp',quote:'Men herregud ... Kan du inte ditt jobb?'},
+  {from:40,to:50,kind:'Ytterligare förminskning',quote:'Kan du hämta någon som faktiskt vet vad de håller på med?'}
+ ],question:'När gick gästens irritation över till att ifrågasätta Nina som person? Hur skulle en professionell gäst kunna uttrycka sig?'},
+ 2:{duration:45,moments:[
+  {from:4,to:10,kind:'Första varningssignal',quote:'Är du inte färdig än? Du är alltid så långsam.'},
+  {from:15,to:25,kind:'Skuldbeläggning',quote:'Vi andra får alltid göra allting.'},
+  {from:25,to:35,kind:'Tydligt övertramp',quote:'Om du inte klarar jobbet kanske du inte ska vara här.'},
+  {from:35,to:45,kind:'Förminskning',quote:'Ja, och det räcker tydligen inte.'}
+ ],question:'Vad är skillnaden mellan att hjälpa en kollega att utvecklas och att trycka ner kollegan?'},
+ 3:{duration:40,moments:[
+  {from:4,to:10,kind:'Direkt personangrepp',quote:'Du är helt värdelös.'},
+  {from:12,to:22,kind:'Fördjupad kränkning',quote:'Ingen vill ju jobba med dig. Du fattar ju ingenting.'},
+  {from:23,to:31,kind:'Bortförklaring',quote:'Men herregud, jag skämtade ju bara.'},
+  {from:32,to:40,kind:'Skulden flyttas',quote:'Du tål ju ingenting.'}
+ ],question:'Blir en elak kommentar okej bara för att den som sa den kallar det ett skämt?'},
+ 4:{duration:55,moments:[
+  {from:0,to:8,kind:'Indirekt angrepp',quote:'Vissa ska alltid förstöra för alla andra.'},
+  {from:12,to:25,kind:'Fördjupad antydan',quote:'Vissa borde inte vara här om de inte klarar enkla uppgifter.'},
+  {from:25,to:35,kind:'Ansvar undviks',quote:'Har jag sagt ditt namn? ... Om du känner dig träffad ...'},
+  {from:40,to:55,kind:'Ninas reaktion förminskas',quote:'Nu får man tydligen inte säga någonting längre. Allt ska vara så känsligt.'}
+ ],question:'Går det att kränka någon utan att säga personens namn? Vad händer när man lägger skulden på den som reagerar?'},
+ 5:{duration:80,moments:[
+  {from:0,to:10,kind:'Indirekt utpekande',quote:'Vissa förstör alltid lektionerna.'},
+  {from:15,to:25,kind:'Gruppen används som stöd',quote:'Jag säger bara vad alla tänker.'},
+  {from:25,to:40,kind:'Försök att få andra med sig',quote:'Men ni andra fattar väl vad jag menar, eller hur?'},
+  {from:45,to:65,kind:'Skämt som grupptryck',quote:'Det var ju ett skämt, eller hur allihopa? Det var ju skitroligt.'},
+  {from:65,to:80,kind:'Skulden flyttas till Nina',quote:'Nu förstör du ju stämningen för alla andra.'}
+ ],question:'Vilken roll får de andra i gruppen? Hur kan någon visa stöd utan att själv bli indragen i beteendet?'}
+};
 const channel=typeof BroadcastChannel!=='undefined'?new BroadcastChannel('stopp-vfu-v03'):null;
 const storageTeacher='stopp-vfu-v03-teacher', storageStudentId='stopp-vfu-v03-student-id';
 function makeId(){return crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2)}
@@ -112,43 +218,148 @@ function load(k,def){try{return JSON.parse(localStorage.getItem(k))??def}catch{r
 function store(k,val){try{localStorage.setItem(k,JSON.stringify(val))}catch{}}
 let studentId=sessionStorage.getItem(storageStudentId);if(!studentId){studentId=makeId();sessionStorage.setItem(storageStudentId,studentId)}
 const studentStorage='stopp-vfu-v03-student-'+studentId;
-let studentData=load(studentStorage,{format:'stopp-vfu-1',studentId,events:[]});
-if(!Array.isArray(studentData.events))studentData={format:'stopp-vfu-1',studentId,events:[]};
-let teacher=load(storageTeacher,{scenario:1,expected:12,phase:'idle',startedAt:null,stoppedAt:null,events:[],runs:{}});
+// Använd egna datanycklar för v.07 så att tidigare tester inte påverkar resultatet.
+const studentStorageV7='stopp-vfu-v07-student-'+studentId;
+let studentData=load(studentStorageV7,{format:'stopp-vfu-2',studentId,events:[],runs:{}});
+if(!Array.isArray(studentData.events))studentData.events=[];
+if(!studentData.runs||typeof studentData.runs!=='object')studentData.runs={};
+const teacherStorageV7='stopp-vfu-v07-teacher';
+let teacher=load(teacherStorageV7,{scenario:1,expected:12,phase:'idle',startedAt:null,stoppedAt:null,events:[],runs:{},studentRuns:{}});
 if(!Array.isArray(teacher.events))teacher.events=[];
 if(!teacher.runs||typeof teacher.runs!=='object')teacher.runs={};
+if(!teacher.studentRuns||typeof teacher.studentRuns!=='object')teacher.studentRuns={};
 if(teacher.phase==='running')teacher.phase='stopped';
-let studentScenario=1, studentStartAt=Date.now(), studentCanPress=true, studentStoppedByTeacher=false, audioCtx=null, lastClick=0, alreadyAlerted=false;
+let studentScenario=1, audioCtx=null, lastClick=0, alreadyAlerted=false;
 const params=new URLSearchParams(location.search);
 const teacherView=params.get('vy')==='larare';
 const recipientFromLink=TEACHER_EMAIL;
 const msFmt=ms=>{let s=Math.floor(Math.max(0,ms)/1000);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
 function updateUrlEmail(){const base=new URL(location.href);base.search='';base.hash='';base.searchParams.set('vy','elev');$('studentLink').value=base.href}
 function runFor(s){return teacher.runs[String(s)]||null}
-function scenarioEvents(s){const run=runFor(s);return teacher.events.filter(e=>Number(e.scenario)===Number(s)&&(!run||!run.startedAt||(+e.at>=run.startedAt-1500&&(!run.stoppedAt||+e.at<=run.stoppedAt+1500))))}
+function scenarioEvents(s){return teacher.events.filter(e=>Number(e.scenario)===Number(s))}
 function currentEvents(){return scenarioEvents(teacher.scenario)}
-function elapsedFromTeacher(e){const run=runFor(e.scenario);if(!run||!Number.isFinite(+run.startedAt)||!Number.isFinite(+e.at)||+e.at<=0)return null;return Math.round(((+e.at-run.startedAt)/1000)*10)/10}
+function elapsedFromTeacher(e){if(e.relative)return e.seconds;const run=runFor(e.scenario);if(!run||!Number.isFinite(+run.startedAt)||!Number.isFinite(+e.at)||+e.at<=0)return null;return Math.round(((+e.at-run.startedAt)/1000)*10)/10}
 function eventTime(e){const sec=elapsedFromTeacher(e);return sec===null||sec<0?'–':sec.toFixed(1)+' sek'}
 function uniqueCount(events){return new Set(events.map(e=>e.studentId)).size}
 function soundUnlock(){try{const Audio=window.AudioContext||window.webkitAudioContext;if(!audioCtx&&Audio)audioCtx=new Audio();if(audioCtx?.state==='suspended')audioCtx.resume()}catch{}}
 function sound(){try{soundUnlock();if(!audioCtx)return;[0,.28,.56].forEach((offset,i)=>{const osc=audioCtx.createOscillator(),gain=audioCtx.createGain(),t=audioCtx.currentTime+offset;osc.type='sine';osc.frequency.value=i===1?530:730;gain.gain.setValueAtTime(.001,t);gain.gain.exponentialRampToValueAtTime(.14,t+.03);gain.gain.exponentialRampToValueAtTime(.001,t+.22);osc.connect(gain);gain.connect(audioCtx.destination);osc.start(t);osc.stop(t+.24)})}catch{}}
 function showAlarm(all=false){$('alarmText').textContent=all?'ALLA HAR REAGERAT!':'SCENARIOT AVSLUTAS';$('alarmOverlay').classList.remove('hidden');sound()}
-function switchStudentScenario(n){studentScenario=Number(n);studentStartAt=Date.now();lastClick=0;studentCanPress=true;studentStoppedByTeacher=false;$('studentScenario').value=String(n);$('studentTitle').textContent='SCENARIO '+n;renderStudent()}
-function renderStudent(){const count=studentData.events.filter(e=>Number(e.scenario)===studentScenario).length;$('pressCount').textContent=String(count);$('stopButton').disabled=!studentCanPress;$('studentState').textContent=studentStoppedByTeacher?'Scenariot är avslutat. Välj nästa scenario.':count?'Dina tryck sparas på den här datorn.':'';}
-function receiveEvent(evt,fromImport=false){if(!evt||typeof evt!=='object'||typeof evt.id!=='string'||typeof evt.studentId!=='string'||!Number.isFinite(+evt.seconds)||![1,2,3,4,5].includes(Number(evt.scenario)))return false;
+function studentRun(n=studentScenario){return studentData.runs[String(n)]||null}
+function saveStudent(){store(studentStorageV7,studentData)}
+function studentPhase(){const r=studentRun();return !r?'ready':r.endedAt?'finished':'running'}
+function elapsedStudent(){const r=studentRun();if(!r)return 0;return Math.max(0,(r.endedAt||Date.now())-r.startedAt)}
+function switchStudentScenario(n){
+ if(studentPhase()==='running'){$('studentScenario').value=String(studentScenario);$('studentState').textContent='Tryck SLUT innan du byter scenario.';return}
+ studentScenario=Number(n);lastClick=0;$('studentScenario').value=String(n);$('studentTitle').textContent='SCENARIO '+n;renderStudent();
+}
+function renderStudent(){
+ const phase=studentPhase(),count=studentData.events.filter(e=>Number(e.scenario)===studentScenario).length;
+ $('pressCount').textContent=String(count);
+ const btn=$('stopButton');btn.classList.remove('ready','finished','pulse');btn.disabled=phase==='finished';
+ if(phase==='ready'){
+  btn.classList.add('ready');btn.innerHTML='STARTA<small>TRYCK NÄR ROLLSPELET BÖRJAR</small>';btn.setAttribute('aria-label','STARTA – starta scenariot');
+  $('studentInstruction').textContent='Tryck på STARTA när Ola och Nina börjar.';
+  $('studentState').textContent='Din tidtagning börjar när du trycker.';
+ }else if(phase==='running'){
+  btn.innerHTML='STOPP!<small>TRYCK NÄR DET GÅR FÖR LÅNGT</small>';btn.setAttribute('aria-label','STOPP – markera gränsen, flera tryck tillåtna');
+  $('studentInstruction').textContent='Tryck STOPP varje gång någon går över gränsen.';
+  $('studentState').textContent='När rollspelet är färdigt: tryck SLUT.';
+ }else{
+  btn.classList.add('finished');btn.innerHTML='KLART<small>VÄLJ NÄSTA SCENARIO</small>';btn.setAttribute('aria-label','Scenariot är färdigt');
+  $('studentInstruction').textContent='Scenariot är färdigt.';
+  $('studentState').textContent='Bra! Välj nästa scenario, eller skicka resultaten efter sista scenariot.';
+ }
+ $('studentFinish').classList.toggle('hidden',phase!=='running');
+ $('studentScenario').disabled=phase==='running';
+ $('studentTimer').textContent=msFmt(elapsedStudent());
+}
+function studentStart(){
+ if(studentPhase()!=='ready')return;
+ studentData.runs[String(studentScenario)]={startedAt:Date.now(),endedAt:null};
+ saveStudent();lastClick=0;renderStudent();
+}
+function studentFinish(){
+ const r=studentRun();if(!r||r.endedAt)return;
+ r.endedAt=Date.now();saveStudent();renderStudent();
+}
+function receiveEvent(evt,fromImport=false,relative=false){
+ if(!evt||typeof evt!=='object'||typeof evt.id!=='string'||typeof evt.studentId!=='string'||!Number.isFinite(+evt.seconds)||![1,2,3,4,5].includes(Number(evt.scenario)))return false;
  if(teacher.events.some(x=>x.id===evt.id))return false;
- const e={id:evt.id.slice(0,100),studentId:evt.studentId.slice(0,100),scenario:Number(evt.scenario),seconds:Math.max(0,Math.min(3600,+evt.seconds)),at:Number.isFinite(+evt.at)?+evt.at:0,source:fromImport?'import':'local'};
- teacher.events.push(e);store(storageTeacher,teacher);renderTeacher();if(!fromImport&&teacher.phase==='running'&&e.scenario===teacher.scenario&&uniqueCount(currentEvents())>=teacher.expected)endTeacher(true);return true}
-function studentPress(){if(!studentCanPress)return;const now=Date.now();if(now-lastClick<350)return;lastClick=now;const evt={id:makeId(),studentId,scenario:studentScenario,seconds:Math.round((now-studentStartAt)/100)/10,at:now};studentData.events.push(evt);store(studentStorage,studentData);channel?.postMessage({type:'press',event:evt});renderStudent();$('stopButton').classList.add('pulse');setTimeout(()=>$('stopButton').classList.remove('pulse'),160);if(navigator.vibrate)try{navigator.vibrate(35)}catch{}}
-function studentPayload(){return {format:'stopp-vfu-1',studentId,events:studentData.events.map(e=>({id:e.id,studentId:e.studentId,scenario:e.scenario,seconds:e.seconds,at:e.at}))}}
+ const e={id:evt.id.slice(0,100),studentId:evt.studentId.slice(0,100),scenario:Number(evt.scenario),seconds:Math.max(0,Math.min(3600,+evt.seconds)),at:Number.isFinite(+evt.at)?+evt.at:0,relative:!!relative,source:fromImport?'import':'local'};
+ teacher.events.push(e);store(teacherStorageV7,teacher);renderTeacher();
+ // Ingen automatisk live-avslutning: olika elevdatorer kan inte synkas via enbart GitHub Pages.
+ return true;
+}
+function studentPress(){
+ if(studentPhase()!=='running')return;
+ const now=Date.now();if(now-lastClick<350)return;lastClick=now;
+ const evt={id:makeId(),studentId,scenario:studentScenario,seconds:Math.round((now-studentRun().startedAt)/100)/10,at:now};
+ studentData.events.push(evt);saveStudent();channel?.postMessage({type:'press',event:evt,relative:true});renderStudent();
+ $('stopButton').classList.add('pulse');setTimeout(()=>$('stopButton').classList.remove('pulse'),160);
+ if(navigator.vibrate)try{navigator.vibrate(35)}catch{}
+}
+function studentMainButton(){if(studentPhase()==='ready')studentStart();else if(studentPhase()==='running')studentPress()}
+function studentPayload(){return {format:'stopp-vfu-2',studentId,runs:studentData.runs,events:studentData.events.map(e=>({id:e.id,studentId:e.studentId,scenario:e.scenario,seconds:e.seconds,at:e.at}))}}
+function hasStudentData(){return Object.keys(studentData.runs).length>0||studentData.events.length>0}
 function download(content,filename,type){const blob=new Blob([content],{type}),u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=filename;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2500)}
-function saveStudentJson(){if(!studentData.events.length){$('sendStatus').textContent='Inga STOPP-tryck har registrerats ännu.';return}download(JSON.stringify(studentPayload(),null,2),'STOPP-resultat-'+studentId.slice(0,8)+'.json','application/json');$('sendStatus').textContent='JSON-filen sparades på datorn.'}
-function emailStudentJson(){const recipient=recipientFromLink;if(!recipient||!/^\S+@\S+\.\S+$/.test(recipient)){$('sendStatus').textContent='Mottagaradressen är ogiltig. Kontakta läraren.';return}if(!studentData.events.length){$('sendStatus').textContent='Det finns inga tryck att skicka än.';return}
+function saveStudentJson(){if(Object.values(studentData.runs).some(r=>!r.endedAt)){$('sendStatus').textContent='Tryck SLUT på det pågående scenariot först.';return}if(!hasStudentData()){$('sendStatus').textContent='Starta och avsluta minst ett scenario först.';return}download(JSON.stringify(studentPayload(),null,2),'STOPP-resultat-'+studentId.slice(0,8)+'.json','application/json');$('sendStatus').textContent='JSON-filen sparades på datorn.'}
+function emailStudentJson(){if(Object.values(studentData.runs).some(r=>!r.endedAt)){$('sendStatus').textContent='Tryck SLUT på det pågående scenariot först.';return}const recipient=recipientFromLink;if(!recipient||!/^\S+@\S+\.\S+$/.test(recipient)){$('sendStatus').textContent='Mottagaradressen är ogiltig. Kontakta läraren.';return}if(!hasStudentData()){$('sendStatus').textContent='Inga avslutade eller startade scenarier att skicka ännu.';return}
  const json=JSON.stringify(studentPayload());const intro='STOPP – anonymt resultat från övningen.\n\nKopiera JSON-texten nedan till lärarpanelen för att läsa in den:\n\n';const subject='STOPP – resultat';const url='mailto:'+recipient+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(intro+json);
  if(url.length>11000){$('sendStatus').textContent='Resultatet är för långt för ett vanligt mejlutkast. Spara JSON-filen och bifoga den själv i ett mejl.';return}
  $('sendStatus').textContent='Mejlet till '+TEACHER_EMAIL+' öppnas. Du måste själv trycka Skicka. Om inget mejlprogram startar: spara JSON och bifoga filen manuellt. Avsändaren syns för läraren.';
  window.location.href=url;
 }
+function sceneTimedEvents(s){return scenarioEvents(s).map(e=>({event:e,sec:elapsedFromTeacher(e)})).filter(o=>o.sec!==null&&o.sec>=0&&o.sec<=3600)}
+function momentStats(events,m){
+ const matches=events.filter(o=>o.sec>=m.from&&o.sec<m.to);
+ return {presses:matches.length,participants:new Set(matches.map(o=>o.event.studentId)).size};
+}
+function momentRow(m,timed){
+ const info=momentStats(timed,m);
+ const row=document.createElement('div');row.className='ref-row';
+ const time=document.createElement('span');time.className='ref-time';time.textContent=m.from+'–'+m.to+' sek';
+ const summary=document.createElement('div');const kind=document.createElement('span');kind.className='ref-kind';kind.textContent=m.kind;const quote=document.createElement('div');quote.className='ref-quote';quote.textContent='”'+m.quote+'”';summary.append(kind,quote);
+ const number=document.createElement('div');number.className='ref-count';number.textContent=info.presses+' STOPP';
+ const people=document.createElement('small');people.textContent=info.participants+' deltagarsessioner';number.append(people);
+ row.append(time,summary,number);return row;
+}
+function renderGuide(){if(!teacherView)return;
+ const s=Number(teacher.scenario),guide=SCENARIO_GUIDE[s],timed=sceneTimedEvents(s),el=$('refMoments');el.replaceChildren();
+ for(const m of guide.moments)el.append(momentRow(m,timed));
+ $('refDiscussion').textContent='Diskussionsfråga: '+guide.question;
+}
+function projectionMoment(m,timed){
+ const stat=momentStats(timed,m),el=document.createElement('div');el.className='ref-moment';
+ const time=document.createElement('span');time.className='ref-time';time.textContent=m.from+'–'+m.to+' sek';
+ const heading=document.createElement('span');heading.className='ref-kind';heading.textContent=m.kind;
+ const quote=document.createElement('strong');quote.textContent='”'+m.quote+'”';
+ const count=document.createElement('span');count.className='count-note';count.textContent=stat.presses+' STOPP • '+stat.participants+' deltagarsessioner';
+ el.append(time,heading,quote,count);return el;
+}
+function renderReflection(){if(!teacherView)return;
+ const s=Number(teacher.scenario),g=SCENARIO_GUIDE[s],es=scenarioEvents(s),timed=sceneTimedEvents(s),valid=timed.map(o=>o.sec);
+ $('refScreenTitle').textContent='Scenario '+s;
+ $('refUnique').textContent=String(uniqueCount(es));$('refTotal').textContent=String(es.length);
+ $('refFirst').textContent=valid.length?Math.min(...valid).toFixed(1)+' s':'–';
+ $('refChartDescription').textContent=valid.length?'Antal STOPP under varje femsekundersperiod från elevens STARTA.':'Inga tidsatta elevtryck har lästs in ännu. Replikerna nedan är enbart stöd för reflektion.';
+ const chart=$('refProjectionChart');chart.replaceChildren();
+ const end=Math.max(g.duration,valid.length?Math.ceil(Math.max(...valid)/5)*5:0);
+ // Begränsa visningen av sena felstämplar: de visas i tabellen men ska inte ge obegriplig graf.
+ const limit=Math.min(150,Math.max(20,end));const groups=Math.ceil(limit/5);const bins=Array.from({length:groups},()=>0);
+ for(const sec of valid){const k=Math.floor(sec/5);if(k>=0&&k<bins.length)bins[k]++}
+ const max=Math.max(1,...bins);
+ for(let i=0;i<bins.length;i++){
+  const bar=document.createElement('div');bar.className='ref-proj-bar';bar.style.height=bins[i]?Math.max(6,Math.round(bins[i]*145/max))+'px':'0';bar.title=`${i*5}–${(i+1)*5} sek: ${bins[i]} STOPP`;
+  if(bins[i]){const txt=document.createElement('span');txt.textContent=bins[i];bar.append(txt)}chart.append(bar);
+ }
+ const ticks=$('refProjectionTicks');ticks.replaceChildren();for(const x of [0,Math.round(limit/4),Math.round(limit/2),Math.round(3*limit/4),limit]){const text=document.createElement('span');text.textContent=x+' s';ticks.append(text)}
+ const moments=$('refProjectionMoments');moments.replaceChildren();for(const m of g.moments)moments.append(projectionMoment(m,timed));
+ $('refProjectionQuestion').textContent=g.question;
+ $('refPrevious').disabled=s<=1;$('refNext').disabled=s>=5;
+}
+function showReflection(){renderReflection();$('reflectionOverlay').classList.remove('hidden');$('refClose').focus()}
+function closeReflection(){$('reflectionOverlay').classList.add('hidden');$('showReflection').focus()}
+function changeReflectionScene(delta){const n=Math.min(5,Math.max(1,Number(teacher.scenario)+delta));if(teacher.phase==='running')return;teacher.scenario=n;const run=runFor(n);teacher.startedAt=run?.startedAt??null;teacher.stoppedAt=run?.stoppedAt??null;teacher.phase=run?.stoppedAt?'stopped':'idle';store(teacherStorageV7,teacher);renderTeacher();renderReflection()}
 function renderTeacher(){
  if(!teacherView)return;
  $('teacherScenario').value=String(teacher.scenario);$('expected').value=String(teacher.expected);
@@ -157,11 +368,15 @@ function renderTeacher(){
  $('teacherStatus').className='status'+(teacher.phase==='running'?' on':'');
  $('teacherClock').textContent=teacher.startedAt?msFmt((teacher.phase==='running'?Date.now():teacher.stoppedAt||Date.now())-teacher.startedAt):'00:00';
  const es=currentEvents(),n=uniqueCount(es),total=es.length,exp=Number(teacher.expected)||1;
- $('uniqueCount').textContent=n;$('totalCount').textContent=total;$('expectedCount').textContent=exp;
- $('progressLabel').textContent=n+' av '+exp+' anonyma deltagarsessioner har tryckt (lokalt test och importerade resultat).';
- $('progressFill').style.width=Math.min(100,100*n/exp)+'%';
+ const importedRuns=Object.values(teacher.studentRuns).filter(r=>r.scenario===teacher.scenario);
+ const ended=importedRuns.filter(r=>r.endedAt).length;
+ $('uniqueCount').textContent=n;$('totalCount').textContent=total;$('finishedCount').textContent=ended;
+ $('progressLabel').textContent=importedRuns.length+' av cirka '+exp+' deltagarsessioner har skickat STARTA-data. '+ended+' har tryckt SLUT. '+n+' har tryckt STOPP minst en gång.';
+ $('progressFill').style.width=Math.min(100,100*ended/exp)+'%';
+ const durations=importedRuns.filter(r=>r.endedAt&&r.endedAt>=r.startedAt).map(r=>Math.round((r.endedAt-r.startedAt)/1000));
+ $('runDurations').textContent=durations.length?'Genomsnittlig scenariotid: '+(durations.reduce((a,b)=>a+b,0)/durations.length).toFixed(1)+' sekunder ('+durations.length+' avslutade tidtagningar).':'Ingen avslutad tidtagning importerad ännu.';
  const run=runFor(teacher.scenario);
- $('timelineInfo').textContent=run?.startedAt?'Tiderna visar sekunder från din STARTA-knapp, beräknade från datorernas klockslag. Enhetens klocka kan ge viss avvikelse.':'Tryck STARTA när rollspelet börjar. Utan sparad STARTA-tid visas inte jämförbara sekunder för insamlade elevsvar.';
+ $('timelineInfo').textContent='Nya elevresultat mäts i sekunder från varje elevs STARTA. Exakt jämförelse beror på att eleverna trycker STARTA samtidigt. Äldre JSON (v.05) använder lärarens STARTA om den finns.';
  const buckets=new Map();
  for(const e of es){const sec=elapsedFromTeacher(e);if(sec===null||sec<0)continue;const b=Math.floor(sec/5)*5;buckets.set(b,(buckets.get(b)||0)+1)}
  const chart=$('eventChart');chart.replaceChildren();
@@ -172,31 +387,49 @@ function renderTeacher(){
   const tr=document.createElement('tr');[String(e.scenario),eventTime(e),e.at?new Date(e.at).toLocaleTimeString('sv-SE'):'–'].forEach(t=>{const td=document.createElement('td');td.textContent=t;tr.append(td)});tbody.append(tr)
  }
  if(!es.length){tbody.innerHTML='<tr><td colspan="3">Inga tryck registrerade.</td></tr>'}
+ renderGuide();
+ if(!$('reflectionOverlay').classList.contains('hidden'))renderReflection();
 }
-function startTeacher(){const exp=Number($('expected').value);if(!Number.isInteger(exp)||exp<1||exp>60){$('teacherNotice').textContent='Ange ett antal elever mellan 1 och 60.';return}soundUnlock();teacher.expected=exp;teacher.scenario=Number($('teacherScenario').value);teacher.startedAt=Date.now();teacher.stoppedAt=null;teacher.phase='running';teacher.runId=makeId();teacher.runs[String(teacher.scenario)]={startedAt:teacher.startedAt,stoppedAt:null};alreadyAlerted=false;store(storageTeacher,teacher);channel?.postMessage({type:'start',scenario:teacher.scenario,at:teacher.startedAt});renderTeacher()}
-function endTeacher(all=false){if(teacher.phase!=='running')return;teacher.phase='stopped';teacher.stoppedAt=Date.now();if(runFor(teacher.scenario))teacher.runs[String(teacher.scenario)].stoppedAt=teacher.stoppedAt;store(storageTeacher,teacher);channel?.postMessage({type:'end',scenario:teacher.scenario});renderTeacher();if(!alreadyAlerted){alreadyAlerted=true;showAlarm(all)}}
-function normalizeAndImport(obj){if(obj?.format!=='stopp-vfu-1'||typeof obj.studentId!=='string'||!Array.isArray(obj.events)||obj.events.length>1000)throw Error('Ogiltigt STOPP-resultat');let count=0;for(const e of obj.events){if(receiveEvent({...e,studentId:obj.studentId},true))count++}return count}
+function startTeacher(){const exp=Number($('expected').value);if(!Number.isInteger(exp)||exp<1||exp>60){$('teacherNotice').textContent='Ange ett antal elever mellan 1 och 60.';return}soundUnlock();teacher.expected=exp;teacher.scenario=Number($('teacherScenario').value);teacher.startedAt=Date.now();teacher.stoppedAt=null;teacher.phase='running';teacher.runId=makeId();teacher.runs[String(teacher.scenario)]={startedAt:teacher.startedAt,stoppedAt:null};alreadyAlerted=false;store(teacherStorageV7,teacher);channel?.postMessage({type:'start',scenario:teacher.scenario,at:teacher.startedAt});renderTeacher()}
+function endTeacher(all=false){if(teacher.phase!=='running')return;teacher.phase='stopped';teacher.stoppedAt=Date.now();if(runFor(teacher.scenario))teacher.runs[String(teacher.scenario)].stoppedAt=teacher.stoppedAt;store(teacherStorageV7,teacher);channel?.postMessage({type:'end',scenario:teacher.scenario});renderTeacher();if(!alreadyAlerted){alreadyAlerted=true;showAlarm(all)}}
+function normalizeAndImport(obj){
+ if(!['stopp-vfu-1','stopp-vfu-2'].includes(obj?.format)||typeof obj.studentId!=='string'||!Array.isArray(obj.events)||obj.events.length>1000)throw Error('Ogiltigt STOPP-resultat');
+ const relative=obj.format==='stopp-vfu-2';
+ if(relative&&obj.runs&&typeof obj.runs==='object'){
+  for(const [scenario,r] of Object.entries(obj.runs)){
+   if(!['1','2','3','4','5'].includes(scenario)||!r||!Number.isFinite(+r.startedAt))continue;
+   const key=obj.studentId.slice(0,100)+'-'+scenario;
+   teacher.studentRuns[key]={studentId:obj.studentId.slice(0,100),scenario:Number(scenario),startedAt:+r.startedAt,endedAt:Number.isFinite(+r.endedAt)&&r.endedAt?+r.endedAt:null};
+  }
+  store(teacherStorageV7,teacher);
+ }
+ let count=0;for(const e of obj.events){if(receiveEvent({...e,studentId:obj.studentId},true,relative))count++}
+ renderTeacher();return count;
+}
 function importPasted(){try{const text=$('pasteJson').value.trim();if(!text)throw Error('Klistra in JSON-text först.');let clean=text;const first=clean.indexOf('{'),last=clean.lastIndexOf('}');if(first!==-1&&last>first)clean=clean.slice(first,last+1);const added=normalizeAndImport(JSON.parse(clean));$('teacherNotice').textContent=added+' nya STOPP importerade. Dubbletter räknas inte igen.'}catch(e){$('teacherNotice').textContent='Det gick inte att läsa texten som STOPP-JSON: '+e.message}}
 async function importFiles(files){let added=0,failed=0;for(const f of files){try{if(f.size>250000)throw Error('Filen för stor');added+=normalizeAndImport(JSON.parse(await f.text()))}catch{failed++}}$('teacherNotice').textContent=added+' nya STOPP importerade.'+(failed?' '+failed+' fil(er) kunde inte läsas.':'')}
 function exportCSV(){
- const ev=teacher.events;if(!ev.length){$('teacherNotice').textContent='Det finns inga resultat att exportera.';return}
- const lines=[['Scenario','Antal deltagarsessioner','Antal STOPP','Sekunder från lärarens STARTA','Klockslag','Typ']];
+ const ev=teacher.events,runs=Object.values(teacher.studentRuns);
+ if(!ev.length&&!runs.length){$('teacherNotice').textContent='Det finns inga resultat att exportera.';return}
+ const lines=[['Scenario','Antal deltagarsessioner som tryckt','Antal STOPP','Sekunder från elevens STARTA','Klockslag','Typ']];
  for(let s=1;s<=5;s++){
-  const se=scenarioEvents(s);if(!se.length)continue;
+  const se=scenarioEvents(s),sr=runs.filter(r=>r.scenario===s);if(!se.length&&!sr.length)continue;
   lines.push([s,uniqueCount(se),se.length,'','','Sammanfattning']);
+  for(const r of sr){const d=r.endedAt?Math.round((r.endedAt-r.startedAt)/100)/10:'';lines.push([s,'', '',d,'','SLUT – scenariolängd'])}
   for(const e of se.slice().sort((a,b)=>a.at-b.at))lines.push([s,'','',elapsedFromTeacher(e)??'',e.at?new Date(e.at).toLocaleTimeString('sv-SE'):'','STOPP']);
  }
  const csv='\ufeff'+lines.map(row=>row.map(c=>'"'+String(c).replaceAll('"','""')+'"').join(';')).join('\r\n');
  download(csv,'STOPP-klassrapport.csv','text/csv;charset=utf-8')
 }
-function resetTeacher(){if(!confirm('Vill du rensa lärarens alla inlästa och lokala resultat?'))return;teacher.events=[];teacher.runs={};teacher.phase='idle';teacher.startedAt=null;teacher.stoppedAt=null;store(storageTeacher,teacher);renderTeacher();$('teacherNotice').textContent='Resultaten har rensats.'}
-$('stopButton').addEventListener('click',studentPress);$('studentScenario').addEventListener('change',e=>switchStudentScenario(e.target.value));$('saveJson').addEventListener('click',saveStudentJson);$('sendEmail').addEventListener('click',emailStudentJson);
-$('closeAlarm').onclick=()=>$('alarmOverlay').classList.add('hidden');$('testSound').onclick=()=>{soundUnlock();sound()};$('startScenario').onclick=startTeacher;$('endScenario').onclick=()=>endTeacher(false);$('teacherScenario').onchange=e=>{if(teacher.phase==='running'){e.target.value=teacher.scenario;return}teacher.scenario=Number(e.target.value);const run=runFor(teacher.scenario);teacher.startedAt=run?.startedAt??null;teacher.stoppedAt=run?.stoppedAt??null;teacher.phase=run?.stoppedAt?'stopped':'idle';store(storageTeacher,teacher);renderTeacher()};$('expected').onchange=e=>{if(teacher.phase==='running'){e.target.value=teacher.expected;return}teacher.expected=Math.max(1,Math.min(60,Number(e.target.value)||12));store(storageTeacher,teacher);renderTeacher()};$('copyLink').onclick=async()=>{try{await navigator.clipboard.writeText($('studentLink').value);$('teacherNotice').textContent='Elevlänken kopierad.'}catch{$('studentLink').focus();$('studentLink').select();$('teacherNotice').textContent='Kopiera den markerade länken med Ctrl+C.'}};$('importPaste').onclick=importPasted;$('importFiles').onchange=e=>importFiles([...e.target.files]);$('exportCsv').onclick=exportCSV;$('clearTeacher').onclick=resetTeacher;
-if(channel)channel.addEventListener('message',({data})=>{if(!data||typeof data!=='object')return;if(teacherView&&data.type==='press')receiveEvent(data.event,false);if(!teacherView&&data.type==='start')switchStudentScenario(data.scenario);if(!teacherView&&data.type==='end'&&data.scenario===studentScenario){studentCanPress=false;studentStoppedByTeacher=true;renderStudent()}});
+function resetTeacher(){if(!confirm('Vill du rensa lärarens alla inlästa och lokala resultat?'))return;teacher.events=[];teacher.runs={};teacher.studentRuns={};teacher.phase='idle';teacher.startedAt=null;teacher.stoppedAt=null;store(teacherStorageV7,teacher);renderTeacher();$('teacherNotice').textContent='Resultaten har rensats.'}
+$('showReflection').onclick=showReflection;$('refClose').onclick=closeReflection;$('refPrevious').onclick=()=>changeReflectionScene(-1);$('refNext').onclick=()=>changeReflectionScene(1);document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('reflectionOverlay').classList.contains('hidden'))closeReflection()});
+$('stopButton').addEventListener('click',studentMainButton);$('studentFinish').addEventListener('click',studentFinish);$('studentScenario').addEventListener('change',e=>switchStudentScenario(e.target.value));$('saveJson').addEventListener('click',saveStudentJson);$('sendEmail').addEventListener('click',emailStudentJson);
+$('closeAlarm').onclick=()=>$('alarmOverlay').classList.add('hidden');$('testSound').onclick=()=>{soundUnlock();sound()};$('startScenario').onclick=startTeacher;$('endScenario').onclick=()=>endTeacher(false);$('teacherScenario').onchange=e=>{if(teacher.phase==='running'){e.target.value=teacher.scenario;return}teacher.scenario=Number(e.target.value);const run=runFor(teacher.scenario);teacher.startedAt=run?.startedAt??null;teacher.stoppedAt=run?.stoppedAt??null;teacher.phase=run?.stoppedAt?'stopped':'idle';store(teacherStorageV7,teacher);renderTeacher()};$('expected').onchange=e=>{if(teacher.phase==='running'){e.target.value=teacher.expected;return}teacher.expected=Math.max(1,Math.min(60,Number(e.target.value)||12));store(teacherStorageV7,teacher);renderTeacher()};$('copyLink').onclick=async()=>{try{await navigator.clipboard.writeText($('studentLink').value);$('teacherNotice').textContent='Elevlänken kopierad.'}catch{$('studentLink').focus();$('studentLink').select();$('teacherNotice').textContent='Kopiera den markerade länken med Ctrl+C.'}};$('importPaste').onclick=importPasted;$('importFiles').onchange=e=>importFiles([...e.target.files]);$('exportCsv').onclick=exportCSV;$('clearTeacher').onclick=resetTeacher;
+if(channel)channel.addEventListener('message',({data})=>{if(!data||typeof data!=='object')return;if(teacherView&&data.type==='press')receiveEvent(data.event,false,!!data.relative)});
 $('student').classList.toggle('hidden',teacherView);$('teacher').classList.toggle('hidden',!teacherView);
 $('teacherEmail').value=TEACHER_EMAIL;updateUrlEmail();
 if(!teacherView){const n=Number(params.get('scenario'));if([1,2,3,4,5].includes(n))studentScenario=n;switchStudentScenario(studentScenario)}else{renderTeacher()}
-setInterval(()=>{if(teacherView&&teacher.phase==='running')$('teacherClock').textContent=msFmt(Date.now()-teacher.startedAt)},250);
+setInterval(()=>{if(teacherView&&teacher.phase==='running')$('teacherClock').textContent=msFmt(Date.now()-teacher.startedAt);if(!teacherView&&studentPhase()==='running')$('studentTimer').textContent=msFmt(elapsedStudent())},200);
 </script>
 </body>
 </html>
