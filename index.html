@@ -48,7 +48,7 @@
           <button id="sendEmail" class="blue">✉ Skicka JSON via mejl</button>
           <button id="saveJson" class="soft">⬇ Spara JSON-fil</button>
         </div>
-        <p class="small" id="studentMailHint">Mejlknappen öppnar ett färdigt mejlutkast. Du behöver själv klicka Skicka.</p>
+        <p class="small" id="studentMailHint">Mottagare: <strong>ola.ekdahl@malmo.se</strong>. Mejlknappen öppnar ett färdigt mejlutkast. Tryck själv på Skicka i mejlprogrammet.</p>
         <p id="sendStatus" role="status"></p>
       </div>
     </details>
@@ -62,8 +62,8 @@
   <div class="card">
    <h2>Förbered elevlänken</h2>
    <label for="teacherEmail">Din mejladress för resultat</label>
-   <input type="email" id="teacherEmail" placeholder="larare@skola.se" autocomplete="email" spellcheck="false">
-   <p class="muted small">Skriv din adress här innan du kopierar elevlänken. Adressen läggs bara i länken, inte i koden på GitHub.</p>
+   <input type="email" id="teacherEmail" value="ola.ekdahl@malmo.se" readonly aria-readonly="true">
+   <p class="muted small">Mejladressen är redan inställd. Elevernas mejlutkast adresseras automatiskt hit, oavsett vilken elevlänk som används.</p>
    <label for="studentLink">Länk att lägga i Google Classroom</label>
    <div class="flex"><input type="text" id="studentLink" readonly style="flex:1;min-width:200px"><button id="copyLink" class="blue">Kopiera elevlänk</button></div>
   </div>
@@ -104,6 +104,7 @@
 <script>
 'use strict';
 const $=id=>document.getElementById(id);
+const TEACHER_EMAIL='ola.ekdahl@malmo.se';
 const channel=typeof BroadcastChannel!=='undefined'?new BroadcastChannel('stopp-vfu-v03'):null;
 const storageTeacher='stopp-vfu-v03-teacher', storageStudentId='stopp-vfu-v03-student-id';
 function makeId(){return crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2)}
@@ -113,15 +114,15 @@ let studentId=sessionStorage.getItem(storageStudentId);if(!studentId){studentId=
 const studentStorage='stopp-vfu-v03-student-'+studentId;
 let studentData=load(studentStorage,{format:'stopp-vfu-1',studentId,events:[]});
 if(!Array.isArray(studentData.events))studentData={format:'stopp-vfu-1',studentId,events:[]};
-let teacher=load(storageTeacher,{scenario:1,expected:12,phase:'idle',startedAt:null,stoppedAt:null,events:[],email:''});
+let teacher=load(storageTeacher,{scenario:1,expected:12,phase:'idle',startedAt:null,stoppedAt:null,events:[]});
 if(!Array.isArray(teacher.events))teacher.events=[];
 if(teacher.phase==='running')teacher.phase='stopped';
 let studentScenario=1, studentStartAt=Date.now(), studentCanPress=true, studentStoppedByTeacher=false, audioCtx=null, lastClick=0, alreadyAlerted=false;
 const params=new URLSearchParams(location.search);
 const teacherView=params.get('vy')==='larare';
-const recipientFromLink=params.get('mail')||'';
+const recipientFromLink=TEACHER_EMAIL;
 const msFmt=ms=>{let s=Math.floor(Math.max(0,ms)/1000);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
-function updateUrlEmail(){const base=new URL(location.href);base.searchParams.set('vy','elev');base.searchParams.delete('scenario');base.searchParams.delete('mail');const email=$('teacherEmail').value.trim();if(email)base.searchParams.set('mail',email);$('studentLink').value=base.href}
+function updateUrlEmail(){const base=new URL(location.href);base.search='';base.hash='';base.searchParams.set('vy','elev');$('studentLink').value=base.href}
 function currentEvents(){return teacher.events.filter(e=>Number(e.scenario)===Number(teacher.scenario))}
 function uniqueCount(events){return new Set(events.map(e=>e.studentId)).size}
 function soundUnlock(){try{const Audio=window.AudioContext||window.webkitAudioContext;if(!audioCtx&&Audio)audioCtx=new Audio();if(audioCtx?.state==='suspended')audioCtx.resume()}catch{}}
@@ -137,7 +138,7 @@ function studentPress(){if(!studentCanPress)return;const now=Date.now();if(now-l
 function studentPayload(){return {format:'stopp-vfu-1',studentId,events:studentData.events.map(e=>({id:e.id,studentId:e.studentId,scenario:e.scenario,seconds:e.seconds,at:e.at}))}}
 function download(content,filename,type){const blob=new Blob([content],{type}),u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=filename;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2500)}
 function saveStudentJson(){if(!studentData.events.length){$('sendStatus').textContent='Inga STOPP-tryck har registrerats ännu.';return}download(JSON.stringify(studentPayload(),null,2),'STOPP-resultat-'+studentId.slice(0,8)+'.json','application/json');$('sendStatus').textContent='JSON-filen sparades på datorn.'}
-function emailStudentJson(){const recipient=recipientFromLink;if(!recipient||!/^\S+@\S+\.\S+$/.test(recipient)){$('sendStatus').textContent='Ingen giltig mejladress finns i elevlänken. Be läraren skapa en ny elevlänk i lärarpanelen.';return}if(!studentData.events.length){$('sendStatus').textContent='Det finns inga tryck att skicka än.';return}
+function emailStudentJson(){const recipient=recipientFromLink;if(!recipient||!/^\S+@\S+\.\S+$/.test(recipient)){$('sendStatus').textContent='Mottagaradressen är ogiltig. Kontakta läraren.';return}if(!studentData.events.length){$('sendStatus').textContent='Det finns inga tryck att skicka än.';return}
  const json=JSON.stringify(studentPayload());const intro='STOPP – anonymt resultat från övningen.\n\nKopiera JSON-texten nedan till lärarpanelen för att läsa in den:\n\n';const subject='STOPP – resultat';const url='mailto:'+encodeURIComponent(recipient)+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(intro+json);
  if(url.length>11000){$('sendStatus').textContent='Resultatet är för långt för ett vanligt mejlutkast. Spara JSON-filen och bifoga den själv i ett mejl.';return}
  $('sendStatus').textContent='Ett mejlutkast öppnas med JSON-texten. Kontrollera det och tryck Skicka. Mejlavsändaren blir synlig för läraren.';
@@ -156,10 +157,10 @@ async function importFiles(files){let added=0,failed=0;for(const f of files){try
 function exportCSV(){const ev=teacher.events;if(!ev.length){$('teacherNotice').textContent='Det finns inga resultat att exportera.';return}const lines=[['Scenario','Antal elever som reagerat','Antal STOPP','Sekunder','Klockslag','Typ']];for(let s=1;s<=5;s++){const se=ev.filter(e=>e.scenario===s);if(!se.length)continue;lines.push([s,uniqueCount(se),se.length,'','','Sammanfattning']);for(const e of se.slice().sort((a,b)=>a.seconds-b.seconds))lines.push([s,'','',e.seconds,e.at?new Date(e.at).toLocaleTimeString('sv-SE'):'','STOPP'])}const csv='\ufeff'+lines.map(row=>row.map(c=>'"'+String(c).replaceAll('"','""')+'"').join(';')).join('\r\n');download(csv,'STOPP-klassrapport.csv','text/csv;charset=utf-8')}
 function resetTeacher(){if(!confirm('Vill du rensa lärarens alla inlästa och lokala resultat?'))return;teacher.events=[];teacher.phase='idle';teacher.startedAt=null;teacher.stoppedAt=null;store(storageTeacher,teacher);renderTeacher();$('teacherNotice').textContent='Resultaten har rensats.'}
 $('stopButton').addEventListener('click',studentPress);$('studentScenario').addEventListener('change',e=>switchStudentScenario(e.target.value));$('saveJson').addEventListener('click',saveStudentJson);$('sendEmail').addEventListener('click',emailStudentJson);
-$('closeAlarm').onclick=()=>$('alarmOverlay').classList.add('hidden');$('testSound').onclick=()=>{soundUnlock();sound()};$('startScenario').onclick=startTeacher;$('endScenario').onclick=()=>endTeacher(false);$('teacherScenario').onchange=e=>{if(teacher.phase==='running'){e.target.value=teacher.scenario;return}teacher.scenario=Number(e.target.value);teacher.startedAt=null;teacher.stoppedAt=null;teacher.phase='idle';store(storageTeacher,teacher);renderTeacher()};$('expected').onchange=e=>{if(teacher.phase==='running'){e.target.value=teacher.expected;return}teacher.expected=Math.max(1,Math.min(60,Number(e.target.value)||12));store(storageTeacher,teacher);renderTeacher()};$('teacherEmail').oninput=e=>{teacher.email=e.target.value.trim();store(storageTeacher,teacher);updateUrlEmail()};$('copyLink').onclick=async()=>{try{await navigator.clipboard.writeText($('studentLink').value);$('teacherNotice').textContent='Elevlänken kopierad.'}catch{$('studentLink').focus();$('studentLink').select();$('teacherNotice').textContent='Kopiera den markerade länken med Ctrl+C.'}};$('importPaste').onclick=importPasted;$('importFiles').onchange=e=>importFiles([...e.target.files]);$('exportCsv').onclick=exportCSV;$('clearTeacher').onclick=resetTeacher;
+$('closeAlarm').onclick=()=>$('alarmOverlay').classList.add('hidden');$('testSound').onclick=()=>{soundUnlock();sound()};$('startScenario').onclick=startTeacher;$('endScenario').onclick=()=>endTeacher(false);$('teacherScenario').onchange=e=>{if(teacher.phase==='running'){e.target.value=teacher.scenario;return}teacher.scenario=Number(e.target.value);teacher.startedAt=null;teacher.stoppedAt=null;teacher.phase='idle';store(storageTeacher,teacher);renderTeacher()};$('expected').onchange=e=>{if(teacher.phase==='running'){e.target.value=teacher.expected;return}teacher.expected=Math.max(1,Math.min(60,Number(e.target.value)||12));store(storageTeacher,teacher);renderTeacher()};$('copyLink').onclick=async()=>{try{await navigator.clipboard.writeText($('studentLink').value);$('teacherNotice').textContent='Elevlänken kopierad.'}catch{$('studentLink').focus();$('studentLink').select();$('teacherNotice').textContent='Kopiera den markerade länken med Ctrl+C.'}};$('importPaste').onclick=importPasted;$('importFiles').onchange=e=>importFiles([...e.target.files]);$('exportCsv').onclick=exportCSV;$('clearTeacher').onclick=resetTeacher;
 if(channel)channel.addEventListener('message',({data})=>{if(!data||typeof data!=='object')return;if(teacherView&&data.type==='press')receiveEvent(data.event,false);if(!teacherView&&data.type==='start')switchStudentScenario(data.scenario);if(!teacherView&&data.type==='end'&&data.scenario===studentScenario){studentCanPress=false;studentStoppedByTeacher=true;renderStudent()}});
 $('student').classList.toggle('hidden',teacherView);$('teacher').classList.toggle('hidden',!teacherView);
-$('teacherEmail').value=teacher.email||'';updateUrlEmail();
+$('teacherEmail').value=TEACHER_EMAIL;updateUrlEmail();
 if(!teacherView){const n=Number(params.get('scenario'));if([1,2,3,4,5].includes(n))studentScenario=n;switchStudentScenario(studentScenario)}else{renderTeacher()}
 setInterval(()=>{if(teacherView&&teacher.phase==='running')$('teacherClock').textContent=msFmt(Date.now()-teacher.startedAt)},250);
 </script>
